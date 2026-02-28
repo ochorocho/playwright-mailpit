@@ -6,8 +6,36 @@ Provides a `mailpit` fixture and convenience helpers (`waitForEmail`, `searchEma
 
 ## Installation
 
+This package is published to the [GitHub npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry). You need to configure the `@ochorocho` scope before installing.
+
+### 1. Authenticate with GitHub Packages
+
+Create a [personal access token](https://github.com/settings/tokens) (classic) with the `read:packages` scope, then log in:
+
 ```bash
-npm install playwright-mailpit
+npm login --scope=@ochorocho --registry=https://npm.pkg.github.com
+```
+
+When prompted, enter your GitHub username and use the token as your password.
+
+Alternatively, add the token directly to your project's `.npmrc`:
+
+```
+@ochorocho:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+```
+
+> **Tip:** For CI environments, set the token via the `NODE_AUTH_TOKEN` environment variable instead of hardcoding it:
+>
+> ```
+> @ochorocho:registry=https://npm.pkg.github.com
+> //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+> ```
+
+### 2. Install the package
+
+```bash
+npm install @ochorocho/playwright-mailpit
 ```
 
 `@playwright/test` is an optional peer dependency — only required if you use the Playwright fixtures.
@@ -16,7 +44,7 @@ npm install playwright-mailpit
 
 ```typescript
 // tests/e2e/my-test.spec.ts
-import { test, expect } from 'playwright-mailpit';
+import { test, expect } from '@ochorocho/playwright-mailpit';
 
 test('user receives welcome email', async ({ page, mailpit, waitForEmail }) => {
   // Trigger an email via your app
@@ -126,7 +154,7 @@ Get a specific email by ID. Returns the full `Message`.
 Use the client without Playwright:
 
 ```typescript
-import { MailpitClient } from 'playwright-mailpit/client';
+import { MailpitClient } from '@ochorocho/playwright-mailpit/client';
 
 const client = new MailpitClient({ url: 'http://localhost:8025' });
 const messages = await client.getMessages();
@@ -137,7 +165,7 @@ const messages = await client.getMessages();
 Build search queries programmatically:
 
 ```typescript
-import { buildSearchQuery } from 'playwright-mailpit';
+import { buildSearchQuery } from '@ochorocho/playwright-mailpit';
 
 const query = buildSearchQuery({
   to: 'user@example.com',
