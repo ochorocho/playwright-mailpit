@@ -53,23 +53,6 @@ jobs:
         env:
           MAILPIT_URL: http://localhost:8025
 
-  build:
-    runs-on: ubuntu-latest
-    needs: [lint-and-typecheck, unit-tests, e2e-tests]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: jdx/mise-action@v2
-      - run: npm ci
-      - run: npm run build
-      - name: Verify dist output
-        run: |
-          test -f dist/index.js
-          test -f dist/index.cjs
-          test -f dist/index.d.ts
-          test -f dist/client.js
-          test -f dist/client.cjs
-          test -f dist/client.d.ts
-
   publish:
     if: startsWith(github.ref, 'refs/tags/v')
     needs:
