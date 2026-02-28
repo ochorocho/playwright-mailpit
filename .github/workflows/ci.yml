@@ -53,21 +53,17 @@ jobs:
         env:
           MAILPIT_URL: http://localhost:8025
 
-  publish:
+  publish-github:
     if: startsWith(github.ref, 'refs/tags/v')
     needs:
       - lint-and-typecheck
       - unit-tests
       - e2e-tests
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v2
       - run: npm ci
-      - run: npm run build
       - name: Configure GitHub Packages registry
         run: echo "//npm.pkg.github.com/:_authToken=\${NODE_AUTH_TOKEN}" > ~/.npmrc
       - name: Set version from tag
@@ -75,3 +71,22 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Uses OIDC trusted publishing — no NPM_TOKEN secret needed
+  # https://docs.npmjs.com/trusted-publishers/
+  publish-npm:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - lint-and-typecheck
+      - unit-tests
+      - e2e-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - name: Install npm with OIDC support
+        run: npm install -g npm@latest
+      - run: npm ci
+      - name: Set version from tag
+        run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version
+      - run: npm publish --registry https://registry.npmjs.org --access public

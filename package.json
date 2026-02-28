@@ -1,6 +1,6 @@
 {
   "name": "@ochorocho/playwright-mailpit",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Playwright fixtures for testing emails with Mailpit",
   "repository": {
     "type": "git",
