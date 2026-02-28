@@ -60,6 +60,9 @@ jobs:
       - unit-tests
       - e2e-tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v2
@@ -81,6 +84,9 @@ jobs:
       - unit-tests
       - e2e-tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v2
@@ -89,4 +95,4 @@ jobs:
       - run: npm ci
       - name: Set version from tag
         run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version
-      - run: npm publish --registry https://registry.npmjs.org --access public
+      - run: npm publish --registry https://registry.npmjs.org --access public --provenance
